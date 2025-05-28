@@ -12,7 +12,7 @@ import circuit
 import circuit_writer
 import spef
 import spice
-import spice_analyser
+# import spice_analyser
 
 
 class Design():
@@ -117,6 +117,7 @@ class Design():
     for f in spef_files:
       spef_reader = spef.SPEFReader('VSS')
       module = spef_reader.ReadSPEF(f)
+      import pdb; pdb.set_trace()
       self.AddModuleFromSPEF(module)
 
   def AddModuleFromSPEF(self, module):

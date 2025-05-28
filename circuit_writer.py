@@ -18,8 +18,8 @@ from google.protobuf import text_format
 
 import pdb
 import circuit
-import circuit_pb2 as circuit_pb
-import utils_pb2 as utils_pb
+import vlsir.circuit_pb2 as circuit_pb
+import vlsir.utils_pb2 as utils_pb
 from spice_util import SIUnitPrefix
 
 class CircuitWriter():
@@ -112,6 +112,13 @@ class CircuitWriter():
   @staticmethod
   def ToParameter(name, value, param_pb):
     param_pb.name = name
+    print(
+      "meow",
+      "name:", name,
+      "\nvalue:", value,
+      "\ntype(value):", type(value),
+      "\nparam_pb:", param_pb,
+    )
     if isinstance(value, circuit.NumericalValue):
       actual_value = value.value
       if value.unit is not None:
@@ -120,7 +127,8 @@ class CircuitWriter():
       else:
         store_pb = param_pb.value
       if isinstance(actual_value, float):
-        store_pb.double = actual_value
+        print("\nstore_pb:", store_pb, "\ntype(store_pb):", type(store_pb), "\n")
+        store_pb.double_value = actual_value
       elif isinstance(actual_value, int) or isinstance(actual_value, long):
         store_pb.value.prefixed.integer = actual_value
       else:
@@ -266,10 +274,11 @@ class CircuitWriter():
 
   @staticmethod
   def FromParameter(param_pb):
+    print(param_pb)
     set_value = param_pb.value.WhichOneof('value')
     if set_value is None:
       return
-    if set_value in ('integer', 'double'):
+    if set_value in ('int64_value', 'double_value'):
       value = getattr(param_pb.value, set_value)
       return circuit.NumericalValue(value)
     if set_value == 'string':
@@ -277,9 +286,8 @@ class CircuitWriter():
     if set_value == 'prefixed':
       prefixed_pb = param_pb.value.prefixed
       set_inner_value = prefixed_pb.WhichOneof('number')
-      if set_inner_value in ('integer', 'double'):
-        # This is a numerical value.
-        value = getattr(param_pb.value.prefixed, set_inner_value)
+      if set_inner_value in ('int64_value', 'double_value'):
+        value = getattr(prefixed_pb, set_inner_value)
         prefix = CircuitWriter.FromSIPrefix(prefixed_pb.prefix)
         return circuit.NumericalValue(value, prefix)
     raise Exception(f'Cannot interpret Parameter {param_pb}')

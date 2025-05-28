@@ -24,7 +24,7 @@ import glob
 import circuit
 import circuit_writer
 import spice
-import spice_analyser
+# import spice_analyser
 from design import Design
 
 
@@ -182,7 +182,7 @@ def WithOptions(options: optparse.Values):
       raise Exception(f'top not found: {options.top_name}')
       sys.exit(1)
 
-  analyser = spice_analyser.SpiceAnalyser(design, output_directory, spice_libs)
+#   analyser = spice_analyser.SpiceAnalyser(design, output_directory, spice_libs)
 
   if options.generate_input_capacitance_tests:
     analyser.AddInputCapacitanceTestsForKnownModules(used_by_module=top)

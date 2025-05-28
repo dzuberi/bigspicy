@@ -557,7 +557,7 @@ class SPEFReader():
 
         resistor = circuit.Resistor(connect[0], connect[1], resistance)
         for signal_or_slice in connect:
-          signal_or_slice.Connect(capacitor)
+          signal_or_slice.Connect(resistor)
         resistor.name = f'R{resistor_count}'
         resistor_count += 1
         module.instances[resistor.name] = resistor
@@ -565,8 +565,9 @@ class SPEFReader():
     for _, node in self.nodes.items():
       signal_name = circuit.VerilogIdentifier(
           self.NodeToSignalName(node)).raw
+      # Always get or create the signal
+      signal = module.GetOrCreateSignal(signal_name)
       if node.IsInternalOnly():
-        signal = module.GetOrCreateSignal(signal_name)
         signal.parent_name = node.root
         continue
       if not node.cell_type:
@@ -592,11 +593,11 @@ class SPEFReader():
       if node.IsBusReference():
         # Create a Slice instead of a Signal.
         raise NotImplementedError()
-      connection.signal = module.GetOrCreateSignal(signal_name)
+      connection.signal = signal
       connection.instance = instance
-      signal.Connect(connection)
       if port_name in instance.connections:
         raise SPEFBadAssumption(f'How is this port connected twice? {port_name}')
+      signal.Connect(connection)
       instance.connections[port_name] = connection
 
     return module
