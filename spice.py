@@ -21,6 +21,7 @@ from spice_util import NumericalValue, SIUnitPrefix
 from enum import Enum
 import os
 import re
+import hashlib
 
 
 SPLIT_KEEPING_PARAMS_RE = re.compile(r'(?<!=)\s+(?!=)')
@@ -317,15 +318,24 @@ class SpiceWriter():
           spice_port_list.append(f'{port_name}.{x}')
     return ' '.join(spice_port_list)
 
+  def SanitizeSpiceName(self, name):
+    """Sanitize a name to be valid in Spice."""
+    # Spice names can only contain alphanumeric characters and underscores.
+    # They cannot start with a digit.
+    safe = re.sub(r'[^a-zA-Z0-9_]', '_', name)
+    if safe[0].isdigit():
+      safe = 'X' + safe  # Spice names cannot start with a digit.
+    return safe
+
   def SpiceSignalName(self, signal_or_slice, index=None, prefix=None):
     if signal_or_slice is None:
       # The signal is probably disconnected; create a new floating node that
       # isn't connected to anything else and use that instead.
       name = f'no_conn_{self.num_floating_nets}'
       self.num_floating_nets += 1
-      return name
+      return self.SanitizeSpiceName(name)
     if isinstance(signal_or_slice, circuit.Signal):
-      return signal_or_slice.name
+      return self.SanitizeSpiceName(signal_or_slice.name)
     assert(isinstance(signal_or_slice, circuit.Slice))
     net_slice = signal_or_slice
     assert(net_slice.top == net_slice.bottom)
@@ -333,7 +343,7 @@ class SpiceWriter():
     signal_name = f'{net_slice.signal.name}.{index}'
     if prefix:
       signal_name = prefix + '_' + signal_name
-    return signal_name
+    return self.SanitizeSpiceName(signal_name)
 
   def _MakeSpiceName(self, instance, additional_prefix=None):
     # NOTE(growly): It would be nice to store this with each instance after
