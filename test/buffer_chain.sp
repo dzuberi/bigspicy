@@ -136,18 +136,21 @@ R20 temp11_2 u12_A  R=4.99991
 ** [instance R21 of RESISTOR, params={'resistance': 13.4601593 prefix:None} connections=['A: [connection R21/A =>[signal: temp11:2 w=1]]', 'B: [connection R21/B =>[signal: u11:Y w=1]]']]
 R21 temp11_2 u11_Y  R=13.4601593
 R22 out out_4 R=0
+R23 in u0_A R=0
 .ENDS
 
 * Simple stimulus for buffer_chain debug
 
 
 Xbuf VDD VSS in out buffer_chain
-VDD VDD 0 0.8
+VDD VDD 0 2.0
 VSS VSS 0 0
 VIN in 0 0
 
 
-.DC VIN 0 0.8 0.01
+.OPTIONS OUTPUT OPALL NOOPTERMINALS
+.DC VIN 0 2.0 0.01
+.PRINT DC V(in) V(VDD) V(VSS)
 .PRINT DC V(out)
-.PRINT DC V(in)
+.PRINT DC V(Xbuf:u0_A) V(Xbuf:u0_Y) V(Xbuf:u1_A) V(Xbuf:u1_Y) V(Xbuf:u2_A) V(Xbuf:u2_Y) V(Xbuf:u3_A) V(Xbuf:u3_Y) V(Xbuf:u4_A) V(Xbuf:u4_Y) V(Xbuf:u5_A) V(Xbuf:u5_Y) V(Xbuf:u6_A) V(Xbuf:u6_Y) V(Xbuf:u7_A) V(Xbuf:u7_Y) V(Xbuf:u8_A) V(Xbuf:u8_Y) V(Xbuf:u9_A) V(Xbuf:u9_Y) V(Xbuf:u10_A) V(Xbuf:u10_Y) V(Xbuf:u11_A) V(Xbuf:u11_Y)
 .END
