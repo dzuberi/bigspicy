@@ -112,13 +112,6 @@ class CircuitWriter():
   @staticmethod
   def ToParameter(name, value, param_pb):
     param_pb.name = name
-    print(
-      "meow",
-      "name:", name,
-      "\nvalue:", value,
-      "\ntype(value):", type(value),
-      "\nparam_pb:", param_pb,
-    )
     if isinstance(value, circuit.NumericalValue):
       actual_value = value.value
       if value.unit is not None:
@@ -127,7 +120,6 @@ class CircuitWriter():
       else:
         store_pb = param_pb.value
       if isinstance(actual_value, float):
-        print("\nstore_pb:", store_pb, "\ntype(store_pb):", type(store_pb), "\n")
         store_pb.double_value = actual_value
       elif isinstance(actual_value, int) or isinstance(actual_value, long):
         store_pb.value.prefixed.integer = actual_value

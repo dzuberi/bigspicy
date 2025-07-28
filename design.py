@@ -117,7 +117,6 @@ class Design():
     for f in spef_files:
       spef_reader = spef.SPEFReader('VSS')
       module = spef_reader.ReadSPEF(f)
-      # import pdb; pdb.set_trace()
       self.AddModuleFromSPEF(module)
 
   def AddModuleFromSPEF(self, module):

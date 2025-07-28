@@ -388,9 +388,9 @@ class SPEFReader():
     return node_ref
 
   def ReadPorts(self, tokens):
-    if len(tokens) != 2:
-      return False
-    name, direction = tokens
+    # if len(tokens) != 2:
+    #   return False
+    name, direction, *_ = tokens
     node = self.DigestNodeReference(name)
     if name not in self.ports:
       self.ports[name] = SPEFPort(name, node, direction)
@@ -490,6 +490,9 @@ class SPEFReader():
       raise SPEFNoTopDesignName()
     module.name = circuit.VerilogIdentifier(self.design_name.strip('"')).raw
 
+    for _, node in self.nodes.items():
+      node.original_name = self.MappedName(node.original_name)
+
     port_nodes = [spef_port.node for _, spef_port in self.ports.items()]
     # Buses are special because we have to deduce their width from references
     # to their substituent signals. Create bus signals for ports.
@@ -499,6 +502,7 @@ class SPEFReader():
     for name, spef_port in self.ports.items():
       node = spef_port.node
       signal_name = node.root if node.IsBusReference() else name
+      signal_name = self.MappedName(signal_name)
       signal_name = circuit.VerilogIdentifier(signal_name).raw
       direction = self.MapSPEFPortDirection(spef_port.direction)
       if signal_name in module.ports:

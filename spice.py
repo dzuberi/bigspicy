@@ -380,6 +380,7 @@ class SpiceWriter():
         return EnsurePrefix(existing_name, 'X')
       instance_name = f'X{self.num_other_named}'
       self.num_other_named += 1
+    print('name for instance {} is {}'.format(instance.name, instance_name))
 
     return InsertSpiceApprovedPrefix(instance_name, additional_prefix)
 
@@ -478,7 +479,7 @@ class SpiceWriter():
       if self.flatten and type(instance.module) is circuit.Module:
         out += f'{self.FlattenedInstance(instance)}\n'
       else:
-        out += f'{self.SpiceInstantiation(instance, generate_names=generate_names)}\n'
+        out += f'{self.SpiceInstantiation(instance, generate_names=True)}\n'
     return out
 
   def WriteRegion(self, file_name, region, generate_names=False):
