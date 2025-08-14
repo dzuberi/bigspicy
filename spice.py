@@ -320,9 +320,9 @@ class SpiceWriter():
 
   def SanitizeSpiceName(self, name):
     """Sanitize a name to be valid in Spice."""
-    # Spice names can only contain alphanumeric characters and underscores.
+    # Spice names can only contain alphanumeric characters and underscores or brackets.
     # They cannot start with a digit.
-    safe = re.sub(r'[^a-zA-Z0-9_]', '_', name)
+    safe = re.sub(r'[^a-zA-Z0-9_\[\]]', '_', name)
     if safe[0].isdigit():
       safe = 'X' + safe  # Spice names cannot start with a digit.
     return safe
