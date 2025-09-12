@@ -340,7 +340,10 @@ class SpiceWriter():
     net_slice = signal_or_slice
     assert(net_slice.top == net_slice.bottom)
     index = net_slice.bottom
-    signal_name = f'{net_slice.signal.name}.{index}'
+    if signal_or_slice.signal.width == 1:
+      signal_name = net_slice.signal.name
+    else:
+      signal_name = f'{net_slice.signal.name}.{index}'
     if prefix:
       signal_name = prefix + '_' + signal_name
     return self.SanitizeSpiceName(signal_name)
