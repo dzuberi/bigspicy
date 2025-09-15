@@ -37,11 +37,13 @@ clean_spice:
 stimulus_%:
 	cd vcd2pwl && \
 	python create_stimulus.py \
-		--verilog_file ../rtl/add.postroute.vg \
-		--spice_file ../add.sp \
+		--verilog_file ../rtl/$*.postroute.vg \
+		--spice_file ../$*.sp \
 		--spice_libs ../lib \
-		--pwl_dir add_pwls \
-		tb.i_add
+		--pwl_dir $*_pwls \
+		--output_dir $*_spice \
+		--prog_done_path prga_tb_top.w_tb_prog_done \
+		prga_tb_top.i_postimpl.dut.i_tile_x1y5.i_tile_x0y0.i_blk.i_cluster_i0	
 
 pwl_%:
 	cd vcd2pwl && \
